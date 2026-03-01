@@ -30,6 +30,19 @@ The prediction would be: **nodes in the top quartile of degree centrality, parti
 
 This is a testable, real-world application of centrality measures that goes beyond just describing network structure. It connects graph theory to actual career trajectory prediction, which is the kind of applied analysis that makes network science useful outside of academia.
 
+## Implementation Notes
+
+The analysis notebook (`Assignment4_Centrality.ipynb`) uses two edge layers to construct a connected network:
+- **Same team edges** (weight = 1.0): Players on the same current/recent team roster
+- **Draft class edges** (weight = 0.3): Players from the same draft year, representing cohort connections
+
+This dual-layer approach is necessary because the free tier of the balldontlie API only provides current team assignments, not historical game-by-game data (which would require the ALL-STAR tier). The draft class connections are a legitimate representation of real professional ties: players drafted in the same year share combine experiences, rookie events, and entered the league as a cohort.
+
+### Requirements
+- R with IRkernel (for Jupyter)
+- Packages: `httr`, `jsonlite`, `igraph`, `ggplot2`, `dplyr`, `tidyr`, `RColorBrewer`, `gridExtra`, `scales`
+- A free balldontlie API key from [app.balldontlie.io](https://app.balldontlie.io)
+
 ---
 
 *Marc Fridson*
