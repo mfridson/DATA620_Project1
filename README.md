@@ -1,37 +1,46 @@
 # Week 4 Assignment: Centrality Measures
 
-## Data Source: NBA Player Shared Team Network via balldontlie API
+## NBA Player Co-Occurrence Network Analysis
 
-For this assignment, I'm proposing a network analysis of NBA players connected by shared team history, sourced from the [balldontlie API](https://www.balldontlie.io/), a free, well-documented REST API that provides current and historical NBA player, team, and season data. The API doesn't require authentication for basic endpoints, which makes it straightforward to pull at scale.
-
-The network would be constructed as follows: each **node** represents an NBA player, and an **edge** connects two players if they appeared on the same team roster during the same season. This creates a co-occurrence network, similar in structure to collaboration networks in academic research, but applied to professional basketball.
-
-### Categorical Variable
-
-The key categorical variable here is **player position** (Guard, Forward, Center), which is available directly from the API's player endpoint. This gives us a natural grouping to compare centrality distributions across. Additional categorical variables could include **active vs. inactive status** and **conference affiliation** (Eastern vs. Western), both of which are derivable from the team data.
-
-## Data Loading Plan
-
-1. **Pull player rosters by season** using the `/players` and `/stats` endpoints from balldontlie. The stats endpoint returns per-game data that includes team and season identifiers, which is what we need to establish co-occurrence.
-
-2. **Construct an edge list** in Python by iterating through each team-season combination and creating pairwise connections between all players who appeared on that roster. Players who were traded mid-season would have edges to teammates on multiple teams, which actually makes the network more interesting since those players become natural bridges.
-
-3. **Load into igraph** using `graph_from_data_frame()`, attaching position as a vertex attribute. From there, computing degree, betweenness, closeness, and eigenvector centrality is straightforward with igraph's built-in functions.
-
-4. **Scope the analysis** to a manageable window, probably the last 5 seasons, which would give us roughly 2,500+ unique players and tens of thousands of edges. Enough to see meaningful structural patterns without the computational overhead of pulling 75 years of NBA history.
-
-## Hypothetical Outcome: Degree Centrality and Post-Career Broadcasting Success
-
-Here's where it gets interesting. The hypothesis I'd want to test is whether **players with higher degree centrality are more likely to transition into successful media or broadcasting careers after retirement.** The logic is that degree centrality in this network is essentially a proxy for how many unique teammates a player has had across their career. Players who were traded frequently or had long careers accumulate more connections, and those connections translate into a broader professional network and name recognition across multiple fan bases.
-
-If we compare degree centrality distributions across positions, I'd expect **Guards to have higher average degree centrality than Centers**, both because guard rotations tend to be deeper and because ball-handling positions interact with more teammates in functional on-court networks. If that holds, we'd also expect to see guards disproportionately represented in post-career media roles, which anecdotally tracks (think about how many former point guards end up as analysts versus former centers).
-
-The prediction would be: **nodes in the top quartile of degree centrality, particularly those in the Guard category, are more likely to achieve positive post-career outcomes in media visibility.** This could be validated by cross-referencing the network data with a labeled dataset of former players who have transitioned to broadcasting, coaching, or front office roles.
-
-This is a testable, real-world application of centrality measures that goes beyond just describing network structure. It connects graph theory to actual career trajectory prediction, which is the kind of applied analysis that makes network science useful outside of academia.
+**Marc Fridson**  
+DATA 620, CUNY SPS  
+Spring 2026
 
 ---
 
-*Marc Fridson*
-*DATA 620, CUNY SPS*
-*Spring 2026*
+### Overview
+
+This project constructs and analyzes an NBA player co-occurrence network using roster data from the last five NBA seasons (2020-21 through 2024-25). Each node represents an NBA player and an edge connects two players who appeared on the same team roster during the same season. The primary categorical variable is player position (Guard, Forward, Center).
+
+### Data Source
+
+Player roster data is sourced from the official NBA Stats API via the `nba_api` Python package. The original proposal referenced the [balldontlie API](https://www.balldontlie.io/), but since the Stats endpoint required for historical roster construction has moved behind a paid tier, this analysis uses `nba_api` to maintain reproducibility. The network construction methodology is identical to what was proposed.
+
+### Network Summary
+
+| Metric | Value |
+|--------|-------|
+| Nodes (players) | 885 |
+| Edges (co-occurrences) | 16,198 |
+| Network density | 0.041 |
+| Connected components | 1 |
+| Players on 2+ teams | 420 (47.5%) |
+
+### Key Findings
+
+1. **No significant positional differences** in degree centrality (Kruskal-Wallis H=0.87, p=0.65) or eigenvector centrality (H=0.31, p=0.86) across Guards, Forwards, and Centers.
+
+2. **Team mobility is the primary centrality driver.** Spearman correlation between number of teams and degree centrality: rho=0.77, p≈0. Players who changed teams frequently bridge otherwise separate clusters.
+
+3. **The null finding is substantively meaningful:** position does not determine structural importance in the co-occurrence network. NBA roster construction and trade patterns distribute positions relatively evenly across the network topology.
+
+### Requirements
+
+```
+pip install networkx matplotlib pandas scipy numpy seaborn nba_api
+```
+
+### Files
+
+- `DATA620_Assignment4.ipynb` — Complete Jupyter Notebook with analysis
+- `README.md` — This file
