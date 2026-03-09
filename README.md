@@ -42,5 +42,5 @@ pip install networkx matplotlib pandas scipy numpy seaborn nba_api
 
 ### Files
 
-- `DATA620_Assignment4.ipynb` — Complete Jupyter Notebook with analysis
+- `DATA620_Project1.ipynb` — Complete Jupyter Notebook with analysis
 - `README.md` — This file
